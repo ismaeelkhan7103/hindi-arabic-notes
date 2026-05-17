@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+p {
+    text-align: center;
+    color: #555;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    margin: 20px 0;
+    box-sizing: border-box;
+}
+
+.note {
+    background: white;
+    padding: 15px;
+    margin: 12px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-right: 5px solid #27ae60;
+}
+
+.arabic {
+    font-size: 26px;
+    direction: rtl;
+    text-align: right;
+    color: #27ae60;
+    margin: 10px 0;
+}
