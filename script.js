@@ -10,45 +10,12 @@ function showAllNotes() {
     displayResults(data);
 }
 
-// Basic + Smart Search
-document.getElementById('searchInput').addEventListener('input', (e) => {
-    const term = e.target.value.trim();
-    if (term === "") {
-        showAllNotes();
-        return;
-    }
-
-    const lowerTerm = term.toLowerCase();
-
-    const filtered = data.filter(note => {
-        const hindi = (note.हिंदी || "").toLowerCase();
-        const arbi  = (note.आरबी || "").toLowerCase();
-
-        // Original match
-        if (hindi.includes(lowerTerm) || arbi.includes(lowerTerm)) {
-            return true;
-        }
-
-        // Clean version for English typing
-        const cleanHindi = hindi.replace(/़|ा|ी|ू|े|ै|ो|ौ|ं|ँ|्/g, "");
-        const cleanArbi  = arbi.replace(/़|ा|ी|ू|े|ै|ो|ौ|ं|ँ|्/g, "");
-        const cleanTerm  = lowerTerm.replace(/़|ा|ी|ू|े|ै|ो|ौ|ं|ँ|्/g, "");
-
-        return cleanHindi.includes(cleanTerm) || 
-               cleanArbi.includes(cleanTerm) ||
-               cleanTerm.includes(cleanHindi) ||
-               cleanTerm.includes(cleanArbi);
-    });
-
-    displayResults(filtered);
-});
-
 function displayResults(results) {
     const container = document.getElementById('results');
     container.innerHTML = '';
 
     if (results.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:40px 10px;">कोई नोट नहीं मिला 😔<br><small>अलग spelling ट्राई करें</small></p>';
+        container.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">कोई नोट नहीं मिला 😔</p>';
         return;
     }
 
@@ -62,5 +29,22 @@ function displayResults(results) {
         container.appendChild(div);
     });
 }
+
+// पुराना Simple Search
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase().trim();
+    
+    if (term === '') {
+        showAllNotes();
+        return;
+    }
+
+    const filtered = data.filter(note => 
+        (note.हिंदी && note.हिंदी.toLowerCase().includes(term)) ||
+        (note.आरबी && note.आरबी.toLowerCase().includes(term))
+    );
+    
+    displayResults(filtered);
+});
 
 loadData();
