@@ -1,15 +1,12 @@
-// सारे नोट्स यहां लोड होंगे
 let data = [];
 
 async function loadData() {
     try {
         const response = await fetch('data.json');
-        const jsonData = await response.json();
-        data = jsonData;
+        data = await response.json();
         showAllNotes();
     } catch (error) {
-        console.error("डेटा लोड करने में समस्या:", error);
-        document.getElementById('results').innerHTML = '<p>डेटा लोड करने में समस्या आई। data.json फाइल चेक करें।</p>';
+        document.getElementById('results').innerHTML = '<p>डेटा लोड करने में समस्या आई</p>';
     }
 }
 
@@ -22,7 +19,7 @@ function displayResults(results) {
     container.innerHTML = '';
 
     if (results.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#e74c3c;">कोई नोट नहीं मिला 😔</p>';
+        container.innerHTML = '<p style="text-align:center; color:red;">कोई नोट नहीं मिला 😔</p>';
         return;
     }
 
@@ -30,14 +27,14 @@ function displayResults(results) {
         const div = document.createElement('div');
         div.className = 'note';
         div.innerHTML = `
-            <h3>${note.हिंदी}</h3>
-            <p class="arabic">${note.आरबी}</p>
+            <h3>${note.hindi}</h3>
+            <p style="font-size:24px; color:#27ae60; margin:10px 0;">${note.arabic_hindi}</p>
         `;
         container.appendChild(div);
     });
 }
 
-// सर्च फंक्शन
+// सर्च
 document.getElementById('searchInput').addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase().trim();
     
@@ -47,12 +44,11 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     }
 
     const filtered = data.filter(note => 
-        (note.हिंदी && note.हिंदी.toLowerCase().includes(term)) ||
-        (note.आरबी && note.आरबी.toLowerCase().includes(term))
+        note.hindi.toLowerCase().includes(term) || 
+        note.arabic_hindi.toLowerCase().includes(term)
     );
     
     displayResults(filtered);
 });
 
-// पेज लोड होने पर डेटा लोड करो
 loadData();
