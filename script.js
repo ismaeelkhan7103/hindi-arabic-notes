@@ -1,9 +1,16 @@
+// सारे नोट्स यहां लोड होंगे
 let data = [];
 
 async function loadData() {
-    const response = await fetch('data.json');
-    data = await response.json();
-    showAllNotes();
+    try {
+        const response = await fetch('data.json');
+        const jsonData = await response.json();
+        data = jsonData;
+        showAllNotes();
+    } catch (error) {
+        console.error("डेटा लोड करने में समस्या:", error);
+        document.getElementById('results').innerHTML = '<p>डेटा लोड करने में समस्या आई। data.json फाइल चेक करें।</p>';
+    }
 }
 
 function showAllNotes() {
@@ -15,7 +22,7 @@ function displayResults(results) {
     container.innerHTML = '';
 
     if (results.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">कोई नोट नहीं मिला 😔</p>';
+        container.innerHTML = '<p style="text-align:center; color:#e74c3c;">कोई नोट नहीं मिला 😔</p>';
         return;
     }
 
@@ -23,14 +30,15 @@ function displayResults(results) {
         const div = document.createElement('div');
         div.className = 'note';
         div.innerHTML = `
-            <h3>${note.हिंदी}</h3>
-            <p class="arabic">${note.आरबी}</p>
+            <h3>${note.title}</h3>
+            <p class="arabic">${note.arabic}</p>
+            <p><strong>मतलब:</strong> ${note.meaning}</p>
         `;
         container.appendChild(div);
     });
 }
 
-// पुराना Simple Search
+// सर्च फंक्शन
 document.getElementById('searchInput').addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase().trim();
     
@@ -40,11 +48,13 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     }
 
     const filtered = data.filter(note => 
-        (note.हिंदी && note.हिंदी.toLowerCase().includes(term)) ||
-        (note.आरबी && note.आरबी.toLowerCase().includes(term))
+        (note.title && note.title.toLowerCase().includes(term)) ||
+        (note.arabic && note.arabic.toLowerCase().includes(term)) ||
+        (note.meaning && note.meaning.toLowerCase().includes(term))
     );
     
     displayResults(filtered);
 });
 
+// पेज लोड होने पर डेटा लोड करो
 loadData();
