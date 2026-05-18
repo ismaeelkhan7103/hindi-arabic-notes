@@ -10,30 +10,34 @@ function showAllNotes() {
     displayResults(data);
 }
 
-function normalize(str) {
-    if (!str) return "";
-    return str.toLowerCase()
-              .replace(/़|ा|ी|ू|े|ै|ो|ौ|ं|ँ|्/g, "")
-              .replace(/[^a-z]/g, "");
+function cleanText(text) {
+    if (!text) return "";
+    return text.toLowerCase()
+               .replace(/़|ा|ी|ू|े|ै|ो|ौ|ं|ँ|्/g, "")
+               .replace(/[^a-z]/g, "");
 }
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
-    let term = e.target.value.trim();
-    if (term === "") {
+    let searchTerm = e.target.value.trim();
+    if (searchTerm === "") {
         showAllNotes();
         return;
     }
 
-    term = normalize(term);
+    const cleanTerm = cleanText(searchTerm);
 
     const filtered = data.filter(note => {
-        const h = normalize(note.हिंदी || "");
-        const a = normalize(note.आरबी || "");
+        const cleanHindi = cleanText(note.हिंदी);
+        const cleanArbi  = cleanText(note.आरबी);
+        const originalHindi = (note.हिंदी || "").toLowerCase();
+        const originalArbi  = (note.आरबी || "").toLowerCase();
 
-        return h.includes(term) || a.includes(term) ||
-               term.includes(h) || term.includes(a) ||
-               h.includes(term.slice(0, Math.floor(term.length * 0.7))) ||
-               a.includes(term.slice(0, Math.floor(term.length * 0.7)));
+        return originalHindi.includes(searchTerm.toLowerCase()) ||
+               originalArbi.includes(searchTerm.toLowerCase()) ||
+               cleanHindi.includes(cleanTerm) ||
+               cleanArbi.includes(cleanTerm) ||
+               cleanTerm.includes(cleanHindi) ||
+               cleanTerm.includes(cleanArbi);
     });
 
     displayResults(filtered);
@@ -41,10 +45,10 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
 
 function displayResults(results) {
     const container = document.getElementById('results');
-    container.innerHTML = "";
+    container.innerHTML = '';
 
     if (results.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color:#e74c3c; padding:40px 10px;">कोई नोट नहीं मिला 😔</p>`;
+        container.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:40px 10px;">कोई नोट नहीं मिला 😔</p>';
         return;
     }
 
