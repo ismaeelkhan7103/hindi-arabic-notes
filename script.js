@@ -10,31 +10,31 @@ function showAllNotes() {
     displayResults(data);
 }
 
-function cleanText(text) {
-    if (!text) return "";
-    return text.toLowerCase()
-               .replace(/़|ा|ी|ू|े|ै|ो|ौ|ं|ँ|्/g, "")
-               .replace(/[^a-z]/g, "");
-}
-
+// Basic + Smart Search
 document.getElementById('searchInput').addEventListener('input', (e) => {
-    let searchTerm = e.target.value.trim();
-    if (searchTerm === "") {
+    const term = e.target.value.trim();
+    if (term === "") {
         showAllNotes();
         return;
     }
 
-    const cleanTerm = cleanText(searchTerm);
+    const lowerTerm = term.toLowerCase();
 
     const filtered = data.filter(note => {
-        const cleanHindi = cleanText(note.हिंदी);
-        const cleanArbi  = cleanText(note.आरबी);
-        const originalHindi = (note.हिंदी || "").toLowerCase();
-        const originalArbi  = (note.आरबी || "").toLowerCase();
+        const hindi = (note.हिंदी || "").toLowerCase();
+        const arbi  = (note.आरबी || "").toLowerCase();
 
-        return originalHindi.includes(searchTerm.toLowerCase()) ||
-               originalArbi.includes(searchTerm.toLowerCase()) ||
-               cleanHindi.includes(cleanTerm) ||
+        // Original match
+        if (hindi.includes(lowerTerm) || arbi.includes(lowerTerm)) {
+            return true;
+        }
+
+        // Clean version for English typing
+        const cleanHindi = hindi.replace(/़|ा|ी|ू|े|ै|ो|ौ|ं|ँ|्/g, "");
+        const cleanArbi  = arbi.replace(/़|ा|ी|ू|े|ै|ो|ौ|ं|ँ|्/g, "");
+        const cleanTerm  = lowerTerm.replace(/़|ा|ी|ू|े|ै|ो|ौ|ं|ँ|्/g, "");
+
+        return cleanHindi.includes(cleanTerm) || 
                cleanArbi.includes(cleanTerm) ||
                cleanTerm.includes(cleanHindi) ||
                cleanTerm.includes(cleanArbi);
@@ -48,7 +48,7 @@ function displayResults(results) {
     container.innerHTML = '';
 
     if (results.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:40px 10px;">कोई नोट नहीं मिला 😔</p>';
+        container.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:40px 10px;">कोई नोट नहीं मिला 😔<br><small>अलग spelling ट्राई करें</small></p>';
         return;
     }
 
